@@ -1,19 +1,29 @@
-// src/utils/storage.js
 const DEFAULT_QUESTIONS = [
-  { id: 1, text: 'Quanto hai apprezzato il gioco del calcolo a mente?' },
-  { id: 2, text: 'Quanto era difficile per te il gioco del calcolo a mente?' },
-  { id: 3, text: 'Quanto hai apprezzato il gioco del calcolo in colonna?' },
-  { id: 4, text: 'Quanto era difficile per te il gioco del calcolo in colonna?' },
-  { id: 5, text: 'Quanto hai apprezzato il gioco dei blocchi numerati?' },
-  { id: 6, text: 'Quanto era difficile per te il gioco dei blocchi numerati?' },
-  { id: 7, text: 'Quanto preferisci fare matematica giocando con la realtà virtuale?' },
-  { id: 8, text: 'Quanto eri concentrato sugli esercizi?' },
+  { id: 1, text: 'Ti è piaciuto il gioco del calcolo a mente?', negativeLabel: 'No per niente', positiveLabel: 'Si tanto' },
+  { id: 2, text: 'Era difficile il gioco del calcolo a mente?', negativeLabel: 'Difficilissimo', positiveLabel: 'Facilissimo' },
+  { id: 3, text: 'Ti è piaciuto il gioco del calcolo in colonna?', negativeLabel: 'No per niente', positiveLabel: 'Si tanto' },
+  { id: 4, text: 'Era difficile il gioco del calcolo in colonna?', negativeLabel: 'Difficilissimo', positiveLabel: 'Facilissimo' },
+  { id: 5, text: 'Ti è piaciuto il gioco dei blocchi numerati?', negativeLabel: 'No per niente', positiveLabel: 'Si tanto' },
+  { id: 6, text: 'Era difficile il gioco dei blocchi numerati?', negativeLabel: 'Difficilissimo', positiveLabel: 'Facilissimo' },
+  { id: 7, text: 'Ti piacerebbe usare questi giochi per fare matematica?', negativeLabel: 'No per niente', positiveLabel: 'Si tanto' },
+  { id: 8, text: 'Ti sei divertito con questi giochi?', negativeLabel: 'No per niente', positiveLabel: 'Si tanto' },
 ];
 
 export const loadQuestions = () => {
   const stored = localStorage.getItem('questions');
   if (stored) {
-    return JSON.parse(stored);
+    const questions = JSON.parse(stored);
+    // Check if any question is missing labels and update them
+    const updatedQuestions = questions.map(q => {
+      const defaultQuestion = DEFAULT_QUESTIONS.find(dq => dq.id === q.id);
+      return {
+        ...q,
+        negativeLabel: q.negativeLabel || defaultQuestion.negativeLabel,
+        positiveLabel: q.positiveLabel || defaultQuestion.positiveLabel
+      };
+    });
+    localStorage.setItem('questions', JSON.stringify(updatedQuestions));
+    return updatedQuestions;
   } else {
     localStorage.setItem('questions', JSON.stringify(DEFAULT_QUESTIONS));
     return DEFAULT_QUESTIONS;

@@ -1,4 +1,3 @@
-// src/components/AdminPanel.js
 import React, { useState, useEffect } from 'react';
 import { loadQuestions, saveQuestions, clearSessions } from '../utils/storage';
 import EditableQuestion from './EditableQuestion';
@@ -7,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 function AdminPanel({ isAdminLoggedIn, onAdminLogin }) {
   const [questions, setQuestions] = useState([]);
   const [newQuestionText, setNewQuestionText] = useState('');
+  const [newNegativeLabel, setNewNegativeLabel] = useState('');
+  const [newPositiveLabel, setNewPositiveLabel] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const navigate = useNavigate();
@@ -16,8 +17,8 @@ function AdminPanel({ isAdminLoggedIn, onAdminLogin }) {
   }, []);
 
   const handleLogin = () => {
-    // Controllo password hardcoded
-    if (password === 'admin123') {
+    // Controllo password con variabile d'ambiente
+    if (password === process.env.REACT_APP_ADMIN_PASSWORD) {
       onAdminLogin(true);
       setLoginError('');
     } else {
@@ -27,12 +28,19 @@ function AdminPanel({ isAdminLoggedIn, onAdminLogin }) {
 
   const handleAddQuestion = () => {
     if (newQuestionText.trim() === '') return;
-    const newQuestion = { id: Date.now(), text: newQuestionText };
+    const newQuestion = { 
+      id: Date.now(), 
+      text: newQuestionText,
+      negativeLabel: newNegativeLabel,
+      positiveLabel: newPositiveLabel
+    };
     const updatedQuestions = [...questions, newQuestion];
     setQuestions(updatedQuestions);
     saveQuestions(updatedQuestions);
     clearSessions(); // Reset delle sessioni poiché le domande sono cambiate
     setNewQuestionText('');
+    setNewNegativeLabel('');
+    setNewPositiveLabel('');
   };
 
   const handleDeleteQuestion = (id) => {
@@ -42,8 +50,10 @@ function AdminPanel({ isAdminLoggedIn, onAdminLogin }) {
     clearSessions();
   };
 
-  const handleEditQuestion = (id, newText) => {
-    const updatedQuestions = questions.map(q => (q.id === id ? { ...q, text: newText } : q));
+  const handleEditQuestion = (id, newText, newNeg, newPos) => {
+    const updatedQuestions = questions.map(q => 
+      q.id === id ? { ...q, text: newText, negativeLabel: newNeg, positiveLabel: newPos } : q
+    );
     setQuestions(updatedQuestions);
     saveQuestions(updatedQuestions);
     clearSessions();
@@ -78,8 +88,24 @@ function AdminPanel({ isAdminLoggedIn, onAdminLogin }) {
           value={newQuestionText}
           onChange={e => setNewQuestionText(e.target.value)}
           placeholder="Testo della domanda"
-          style={{ width: '80%', padding: '8px' }}
+          style={{ width: '80%', padding: '8px', marginBottom: '10px' }}
         />
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: '80%', margin: '0 auto', marginBottom: '10px' }}>
+          <input 
+            type="text"
+            value={newNegativeLabel}
+            onChange={e => setNewNegativeLabel(e.target.value)}
+            placeholder="Etichetta negativa"
+            style={{ width: '48%', padding: '8px' }}
+          />
+          <input 
+            type="text"
+            value={newPositiveLabel}
+            onChange={e => setNewPositiveLabel(e.target.value)}
+            placeholder="Etichetta positiva"
+            style={{ width: '48%', padding: '8px' }}
+          />
+        </div>
         <button onClick={handleAddQuestion} className="btn" style={{ marginLeft: '10px' }}>
           Aggiungi
         </button>
