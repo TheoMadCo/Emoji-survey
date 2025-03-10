@@ -7,6 +7,7 @@ const DEFAULT_QUESTIONS = [
   { id: 6, text: 'Era difficile il gioco dei blocchi numerati?', negativeLabel: 'Difficilissimo', positiveLabel: 'Facilissimo' },
   { id: 7, text: 'Ti piacerebbe usare questi giochi per fare matematica?', negativeLabel: 'No per niente', positiveLabel: 'Si tanto' },
   { id: 8, text: 'I giochi erano divertenti?', negativeLabel: 'No per niente', positiveLabel: 'Si tanto' },
+  { id: 9, text: 'Ti gira la testa?', negativeLabel: 'No per niente', positiveLabel: 'Si tanto' },
 ];
 
 export const loadQuestions = () => {
